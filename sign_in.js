@@ -33,4 +33,6 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
     const password = document.getElementById("password").value;
 
     alert(`Logged in as ${currentRole}\nEmail: ${userEmail}`);
+
+    window.location.href = "Student_dash.html";
 });

@@ -112,7 +112,7 @@ body {
 .right {
     width: 50%;
     height: 100%;
-    background: #f5f7fa;
+    background: #f0edf0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -122,14 +122,14 @@ body {
 
 /* ===== LOGIN BOX ===== */
 .login-box {
-    background: #ffffff;
-    border-radius: 20px;
+    background: #1a71965e;
+    border-radius: 40px;
     padding: clamp(1.4rem, 2.5vw, 2.2rem) clamp(1.4rem, 2.5vw, 2.5rem);
     width: 100%;
-    max-width: 460px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-    display: flex;
-    flex-direction: column;
+    max-width: 560px;
+    box-shadow: 0 8px 80px rgb(246, 4, 4);
+    display: flex;  
+    flex-direction:column;
     gap: 0.85rem;
 }
 
@@ -146,74 +146,40 @@ body {
     margin-top: -0.4rem;
 }
 
-/* ===== TABS ===== */
-.tabs {
-    display: flex;
-    background: #f1f3f6;
-    border-radius: 10px;
-    padding: 4px;
-    gap: 2px;
-}
-
-.tab {
-    flex: 1;
-    padding: 0.5rem 0;
-    border: none;
-    background: transparent;
-    border-radius: 8px;
-    font-size: clamp(0.78rem, 0.95vw, 0.875rem);
-    font-weight: 500;
-    color: #6b7280;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.tab.active {
-    background: #ffffff;
-    color: #111827;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.12);
-    font-weight: 600;
-}
-
-.tab:hover:not(.active) {
-    color: #374151;
-    background: rgba(255,255,255,0.6);
-}
-
 /* ===== FORM ===== */
 #loginForm {
-    display: flex;
+    display: contents;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 1.9rem;
 }
 
 #loginForm div {
-    display: flex;
+    display:contents;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 5.0rem;
 }
 
 #loginForm label {
     font-size: clamp(0.72rem, 0.9vw, 0.82rem);
-    font-weight: 500;
-    color: #374151;
+    font-weight: 700;
+    color: #131313;
     letter-spacing: 0.01em;
 }
 
 #loginForm input {
     width: 100%;
     padding: 0.55rem 0.9rem;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 9px;
+    border: 1.0px solid #1141a2;
+    border-radius: 20px;
     font-size: clamp(0.78rem, 0.95vw, 0.875rem);
-    color: #111827;
-    background: #fafafa;
+    color: #0c0c0c;
+    background: #f8f5f5;
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-    outline: none;
+    outline:#25c3ab;
 }
 
-#loginForm input::placeholder {
-    color: #9ca3af;
+#loginForm input::placeholder { 
+    color: #586885;
 }
 
 #loginForm input:focus {
@@ -261,6 +227,8 @@ body {
     font-size: clamp(0.72rem, 0.9vw, 0.82rem);
     color: #6b7280;
 }
+
+
 
 /* ===== RESPONSIVE BREAKPOINTS ===== */
 @media (max-width: 900px) {

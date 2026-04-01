@@ -80,11 +80,11 @@ body {
 }
 
 .login-box {
-  background: rgba(255,255,255,0.85);
+  background: #193e6054;
   padding: 40px;
-  border-radius: 20px;
+  border-radius: 60px;
   width: 420px; /* increased */
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  box-shadow: 0 15px 35px rgb(255, 0, 0);
 }
 
 .login-box h2 {
@@ -95,33 +95,6 @@ body {
 .login-box p {
   font-size: 15px;
   margin-bottom: 25px;
-}
-
-/* Tabs */
-.tabs {
-  display: flex;
-  background: #e5e7eb;
-  padding: 6px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-}
-
-.tab {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 10px;
-  font-size: 15px;
-  cursor: pointer;
-  border-radius: 10px;
-  transition: 0.3s;
-}
-
-.tab.active {
-  background: white;
-  color: #1e3a8a;
-  font-weight: 600;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 /* Inputs */

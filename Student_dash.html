@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RPS Engineering College — Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="Student_dash.css">
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<div id="login-page">
+  <div class="container" id="loginContainer">
+    <div class="forms-container">
+      <div class="signin-signup">
+        <!-- Sign In -->
+        <form class="sign-in-form" onsubmit="return false">
+          <h2 class="title">Sign In</h2>
+          <div class="input-field"><i class="fas fa-user"></i><input type="text" placeholder="Username" id="si-user"/></div>
+          <div class="input-field"><i class="fas fa-lock"></i><input type="password" placeholder="Password" id="si-pass"/></div>
+          <button class="btn solid" onclick="doLogin()">Login</button>
+        </form>
+        <!-- Sign Up -->
+        <form class="sign-up-form" onsubmit="return false">
+          <h2 class="title">Sign Up</h2>
+          <div class="input-field"><i class="fas fa-user"></i><input type="text" placeholder="Full Name" id="su-name"/></div>
+          <div class="input-field"><i class="fas fa-id-card"></i><input type="text" placeholder="Roll No." id="su-roll"/></div>
+          <div class="input-field"><i class="fas fa-envelope"></i><input type="email" placeholder="Email" id="su-email"/></div>
+          <div class="input-field"><i class="fas fa-lock"></i><input type="password" placeholder="Password" id="su-pass"/></div>
+          <button class="btn solid" onclick="doLogin()">Sign Up</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="panels-container">
+      <div class="panel left-panel">
+        <div class="content">
+          <h3>New here?</h3>
+          <h1><b>RPS</b> Engineering College</h1>
+          <p>Empowering Minds, Shaping your Future</p>
+          <button class="btn transparent" onclick="document.getElementById('loginContainer').classList.add('sign-up-mode')">Sign Up</button>
+        </div>
+      </div>
+      <div class="panel right-panel">
+        <div class="content">
+          <h3>Already a member?</h3>
+          <h1><b>RPS</b> Engineering College</h1>
+          <p>Welcome back to campus portal</p>
+          <button class="btn transparent" onclick="document.getElementById('loginContainer').classList.remove('sign-up-mode')">Sign In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="dashboard-page">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-profile">
+      <div class="avatar-wrap">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul&backgroundColor=b6e3f4" alt="Student"/>
+        <div class="online-dot"></div>
+      </div>
+      <div class="student-name">Rahul Sharma</div>
+      <div class="student-meta">Roll No: 2201234 &bull; CSE — 3rd Year<br/>Batch 2022–26</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><i class="fas fa-th-large"></i> Dashboard</div>
+      <div class="nav-item" onclick="showPage('result',this)"><i class="fas fa-chart-bar"></i> Result <span class="nav-badge">New</span></div>
+      <div class="nav-item" onclick="showPage('attendance',this)"><i class="fas fa-calendar-check"></i> Attendance</div>
+
+      <div class="nav-section-label">Community</div>
+      <div class="nav-item" onclick="showPage('mygroup',this)"><i class="fas fa-users"></i> My Group</div>
+      <div class="nav-item" onclick="showPage('chat',this)"><i class="fas fa-comments"></i> Chat <span class="nav-badge">3</span></div>
+
+      <div class="nav-section-label">Information</div>
+      <div class="nav-item" onclick="showPage('fee',this)"><i class="fas fa-rupee-sign"></i> About Fee</div>
+      <div class="nav-item" onclick="showPage('brochure',this)"><i class="fas fa-book-open"></i> College Brochure</div>
+      <div class="nav-item" onclick="showPage('achievement',this)"><i class="fas fa-trophy"></i> Achievements</div>
+
+      <div class="nav-section-label">Account</div>
+      <div class="nav-item" onclick="showPage('settings',this)"><i class="fas fa-cog"></i> Settings</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <button class="mob-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="fas fa-bars"></i></button>
+        <div class="header-left">
+          <h2 id="header-title">Dashboard</h2>
+          <p id="header-sub">Welcome back, Rahul 👋</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="refresh-btn" onclick="refreshData()" title="Refresh"><i class="fas fa-sync-alt"></i></button>
+        <div class="notif-btn"><i class="fas fa-bell"></i><span class="notif-dot"></span></div>
+        <div class="header-avatar"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul&backgroundColor=b6e3f4" alt=""/></div>
+      </div>
+    </header>
+
+    <!-- ─── PAGE: DASHBOARD ─── -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(68,129,235,0.15);color:#4481eb"><i class="fas fa-graduation-cap"></i></div>
+          <div class="stat-info"><h3>8.4</h3><p>Current CGPA</p><div class="trend up">↑ +0.2 this sem</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,0.15);color:#22c55e"><i class="fas fa-calendar-check"></i></div>
+          <div class="stat-info"><h3>82%</h3><p>Attendance</p><div class="trend up">↑ Above threshold</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b"><i class="fas fa-rupee-sign"></i></div>
+          <div class="stat-info"><h3>₹45K</h3><p>Fee Pending</p><div class="trend down">↓ Due 31 Jan</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(4,190,254,0.15);color:#04befe"><i class="fas fa-trophy"></i></div>
+          <div class="stat-info"><h3>6</h3><p>Achievements</p><div class="trend up">↑ 2 this month</div></div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header"><h3>📊 Attendance Overview</h3><span>Current Semester</span></div>
+          <div class="chart-wrap"><canvas id="attChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>🎯 Result Progress</h3><span>CGPA per Semester</span></div>
+          <div class="chart-wrap"><canvas id="resultChart"></canvas></div>
+        </div>
+        <div class="chart-card full">
+          <div class="chart-header"><h3>📈 Academic Growth</h3><span>Monthly Performance Score</span></div>
+          <div class="chart-wrap" style="height:180px"><canvas id="growthChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: RESULT ─── -->
+    <div class="page" id="page-result">
+      <div class="page-title">📋 Exam Results</div>
+      <div class="page-subtitle">Semester-wise performance overview</div>
+      <div class="result-grid">
+        <div class="result-card"><div class="result-sem">Semester 1</div><div class="result-sgpa good">7.8</div><div class="result-grade">Grade: A</div></div>
+        <div class="result-card"><div class="result-sem">Semester 2</div><div class="result-sgpa good">8.1</div><div class="result-grade">Grade: A+</div></div>
+        <div class="result-card"><div class="result-sem">Semester 3</div><div class="result-sgpa excellent">8.6</div><div class="result-grade">Grade: O</div></div>
+        <div class="result-card"><div class="result-sem">Semester 4</div><div class="result-sgpa excellent">8.9</div><div class="result-grade">Grade: O</div></div>
+        <div class="result-card"><div class="result-sem">Semester 5</div><div class="result-sgpa excellent">8.4</div><div class="result-grade">Grade: A+</div></div>
+        <div class="result-card"><div class="result-sem">Semester 6 (Current)</div><div class="result-sgpa average">—</div><div class="result-grade">In Progress</div></div>
+      </div>
+      <div class="chart-card" style="margin-bottom:1.5rem">
+        <div class="chart-header"><h3>Subject-wise Marks (Sem 5)</h3><span>Out of 100</span></div>
+        <div class="chart-wrap"><canvas id="subjectChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header"><h3>Subject Details</h3><span>Semester 5</span></div>
+        <table class="subject-table">
+          <tr><th>Subject</th><th>Internal</th><th>External</th><th>Total</th><th>Grade</th></tr>
+          <tr><td>Data Structures</td><td>28/30</td><td>68/70</td><td>96/100</td><td><span class="grade-pill grade-O">O</span></td></tr>
+          <tr><td>Operating Systems</td><td>25/30</td><td>60/70</td><td>85/100</td><td><span class="grade-pill grade-A">A+</span></td></tr>
+          <tr><td>DBMS</td><td>27/30</td><td>62/70</td><td>89/100</td><td><span class="grade-pill grade-A">A+</span></td></tr>
+          <tr><td>Computer Networks</td><td>24/30</td><td>55/70</td><td>79/100</td><td><span class="grade-pill grade-B">A</span></td></tr>
+          <tr><td>Software Engineering</td><td>26/30</td><td>58/70</td><td>84/100</td><td><span class="grade-pill grade-A">A+</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: ATTENDANCE ─── -->
+    <div class="page" id="page-attendance">
+      <div class="page-title">📅 Attendance Tracker</div>
+      <div class="page-subtitle">Current semester subject-wise attendance</div>
+      <div class="att-grid" id="attGrid"></div>
+      <div class="chart-card" style="margin-top:0">
+        <div class="chart-header"><h3>Monthly Attendance Trend</h3><span>2024</span></div>
+        <div class="chart-wrap"><canvas id="attTrendChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: MY GROUP ─── -->
+    <div class="page" id="page-mygroup">
+      <div class="page-title">👥 My Groups</div>
+      <div class="page-subtitle">Academic and activity groups you're part of</div>
+      <div class="group-list">
+        <div class="group-item"><div class="group-icon">💻</div><div class="group-info"><h4>CSE — Semester 6 (Section A)</h4><p>43 members &bull; Main class group</p></div><div class="group-badge">Official</div></div>
+        <div class="group-item"><div class="group-icon">🤖</div><div class="group-info"><h4>AI & ML Club</h4><p>28 members &bull; Project discussions</p></div></div>
+        <div class="group-item"><div class="group-icon">📚</div><div class="group-info"><h4>Study Circle — DSA</h4><p>12 members &bull; Exam prep group</p></div><div class="group-badge">5</div></div>
+        <div class="group-item"><div class="group-icon">🏆</div><div class="group-info"><h4>Hackathon Team — CodeStorm</h4><p>4 members &bull; Private team</p></div></div>
+        <div class="group-item"><div class="group-icon">🎭</div><div class="group-info"><h4>Cultural Committee</h4><p>20 members &bull; Event planning</p></div></div>
+        <div class="group-item"><div class="group-icon">📢</div><div class="group-info"><h4>College Announcements</h4><p>All students &bull; Read only</p></div><div class="group-badge">Official</div></div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: CHAT ─── -->
+    <div class="page" id="page-chat">
+      <div class="page-title">💬 Messages</div>
+      <div class="page-subtitle">Stay connected with classmates & faculty</div>
+      <div class="chat-layout">
+        <div class="chat-list" id="chatList"></div>
+        <div class="chat-window">
+          <div class="chat-header-w">
+            <div class="chat-av">PK</div>
+            <div><div class="chat-name">Prof. Pankaj Kumar</div><div style="font-size:0.72rem;color:var(--muted)">Online</div></div>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+            <button class="chat-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: FEE ─── -->
+    <div class="page" id="page-fee">
+      <div class="page-title">💰 Fee Details</div>
+      <div class="page-subtitle">Academic year 2024–25 fee structure</div>
+      <div class="fee-summary">
+        <div class="fee-card"><div class="fee-label">Total Fee</div><div class="fee-amount">₹1,20,000</div><div class="fee-status">Annual</div></div>
+        <div class="fee-card"><div class="fee-label">Paid</div><div class="fee-amount" style="color:#22c55e">₹75,000</div><div class="fee-status paid">✓ Cleared</div></div>
+        <div class="fee-card"><div class="fee-label">Pending</div><div class="fee-amount" style="color:#f59e0b">₹45,000</div><div class="fee-status pending">⚠ Due: 31 Jan 2025</div></div>
+      </div>
+      <div class="fee-table-wrap">
+        <div class="chart-header"><h3>Fee Breakdown</h3><span>2024–25</span></div>
+        <table class="subject-table">
+          <tr><th>Fee Type</th><th>Amount</th><th>Due Date</th><th>Status</th></tr>
+          <tr><td>Tuition Fee (Sem 1)</td><td>₹40,000</td><td>Jul 2024</td><td><span class="grade-pill grade-O">Paid</span></td></tr>
+          <tr><td>Tuition Fee (Sem 2)</td><td>₹40,000</td><td>Jan 2025</td><td><span class="grade-pill grade-B">Pending</span></td></tr>
+          <tr><td>Exam Fee</td><td>₹3,500</td><td>Nov 2024</td><td><span class="grade-pill grade-O">Paid</span></td></tr>
+          <tr><td>Hostel Fee</td><td>₹25,000</td><td>Jul 2024</td><td><span class="grade-pill grade-O">Paid</span></td></tr>
+          <tr><td>Library & Lab Fee</td><td>₹6,500</td><td>Jan 2025</td><td><span class="grade-pill grade-B">Pending</span></td></tr>
+          <tr><td>Sports & Activity Fee</td><td>₹5,000</td><td>Jul 2024</td><td><span class="grade-pill grade-O">Paid</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: BROCHURE ─── -->
+    <div class="page" id="page-brochure">
+      <div class="page-title">📖 College Brochure</div>
+      <div class="page-subtitle">RPS Engineering College — Official Publications</div>
+      <div class="brochure-grid">
+        <div class="brochure-card"><div class="brochure-img">🎓</div><div class="brochure-body"><h4>Admission Brochure 2024–25</h4><p>Complete guide to admissions, eligibility criteria, fee structure, and campus facilities.</p><div class="brochure-btn"><i class="fas fa-download"></i> Download PDF</div></div></div>
+        <div class="brochure-card"><div class="brochure-img">💻</div><div class="brochure-body"><h4>CSE Department Handbook</h4><p>Curriculum, syllabus, faculty profiles, and lab infrastructure for Computer Science.</p><div class="brochure-btn"><i class="fas fa-download"></i> Download PDF</div></div></div>
+        <div class="brochure-card"><div class="brochure-img">🏫</div><div class="brochure-body"><h4>Campus Life Guide</h4><p>Hostels, sports, cultural events, clubs, and extracurricular opportunities at RPS.</p><div class="brochure-btn"><i class="fas fa-download"></i> Download PDF</div></div></div>
+        <div class="brochure-card"><div class="brochure-img">🤝</div><div class="brochure-body"><h4>Placement Report 2023–24</h4><p>Placement statistics, top recruiters, packages, and student success stories.</p><div class="brochure-btn"><i class="fas fa-download"></i> Download PDF</div></div></div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: ACHIEVEMENT ─── -->
+    <div class="page" id="page-achievement">
+      <div class="page-title">🏆 Achievements</div>
+      <div class="page-subtitle">Your milestones and recognitions</div>
+      <div class="ach-grid">
+        <div class="ach-card"><div class="ach-icon">🥇</div><div class="ach-title">1st Place — Hackathon</div><div class="ach-desc">Won TechFest 2024 hackathon with an AI-powered campus safety app.</div><div class="ach-date">December 2024</div></div>
+        <div class="ach-card"><div class="ach-icon">📜</div><div class="ach-title">Merit Scholarship</div><div class="ach-desc">Awarded merit scholarship for maintaining CGPA above 8.5 consistently.</div><div class="ach-date">November 2024</div></div>
+        <div class="ach-card"><div class="ach-icon">🌟</div><div class="ach-title">Best Student Award</div><div class="ach-desc">Recognized as Best Student of CSE department for academic year 2023–24.</div><div class="ach-date">May 2024</div></div>
+        <div class="ach-card"><div class="ach-icon">🎤</div><div class="ach-title">Paper Presentation</div><div class="ach-desc">Presented research paper on ML applications at National Tech Symposium.</div><div class="ach-date">March 2024</div></div>
+        <div class="ach-card"><div class="ach-icon">🏃</div><div class="ach-title">Sports Champion</div><div class="ach-desc">Gold medal in 100m sprint at Inter-College Sports Meet 2024.</div><div class="ach-date">February 2024</div></div>
+        <div class="ach-card"><div class="ach-icon">💡</div><div class="ach-title">Innovation Award</div><div class="ach-desc">Best project award for IoT-based smart irrigation system at project expo.</div><div class="ach-date">January 2024</div></div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE: SETTINGS ─── -->
+    <div class="page" id="page-settings">
+      <div class="page-title">⚙️ Settings</div>
+      <div class="page-subtitle">Manage your profile and preferences</div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3><i class="fas fa-user-circle"></i> Profile Info</h3>
+          <div class="settings-field"><label>Full Name</label><input type="text" value="Rahul Sharma"/></div>
+          <div class="settings-field"><label>Roll Number</label><input type="text" value="2201234" readonly/></div>
+          <div class="settings-field"><label>Branch</label><input type="text" value="Computer Science Engineering" readonly/></div>
+          <div class="settings-field"><label>Email</label><input type="email" value="rahul.sharma@rps.edu"/></div>
+          <div class="settings-field"><label>Phone</label><input type="tel" value="+91 98765 43210"/></div>
+          <button class="save-btn">Save Changes</button>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-bell"></i> Notifications</h3>
+          <div class="toggle-row"><span class="toggle-label">Result Alerts</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Attendance Reminders</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Fee Reminders</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Chat Messages</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">College Announcements</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Email Notifications</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-lock"></i> Security</h3>
+          <div class="settings-field"><label>Current Password</label><input type="password" placeholder="Enter current password"/></div>
+          <div class="settings-field"><label>New Password</label><input type="password" placeholder="Enter new password"/></div>
+          <div class="settings-field"><label>Confirm Password</label><input type="password" placeholder="Confirm new password"/></div>
+          <button class="save-btn">Update Password</button>
+        </div>
+        <div class="settings-card">
+          <h3><i class="fas fa-palette"></i> Preferences</h3>
+          <div class="settings-field"><label>Language</label><select><option>English</option><option>Hindi</option></select></div>
+          <div class="settings-field"><label>Semester</label><select><option>Semester 6 (Current)</option><option>Semester 5</option></select></div>
+          <div class="toggle-row"><span class="toggle-label">Dark Mode</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span class="toggle-label">Compact View</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <button class="save-btn" style="margin-top:1.5rem">Save Preferences</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main-content -->
+</div><!-- end dashboard -->
+<script src="Student_dash.js"></script>
+</body>
+</html>
