@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Teacher Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="Teacher_dash.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-wrap">
+    </div>
+  </div>
+  <div class="profile-section">
+    <div class="avatar-wrap">
+      <div class="avatar">👩‍🏫</div>
+      <div class="online-dot"></div>
+    </div>
+    <div class="profile-name">Dr. Priya Verma</div>
+    <div class="profile-sub">Dept. of Computer Science<br/>Employee ID: TCH-4421 · Sr. Professor</div>
+  </div>
+  <nav style="flex:1;padding-bottom:16px;">
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" onclick="navigate('dashboard',this)"><span class="icon">🏠</span> Dashboard</div>
+      <div class="nav-item" onclick="navigate('result',this)"><span class="icon">📊</span> Upload Results <span class="nav-badge">New</span></div>
+      <div class="nav-item" onclick="navigate('attendance',this)"><span class="icon">📅</span> Attendance</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Communication</div>
+      <div class="nav-item" onclick="navigate('group',this)"><span class="icon">👥</span> My Groups</div>
+      <div class="nav-item" onclick="navigate('messages',this)"><span class="icon">💬</span> Messages <span class="nav-badge red">3</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Management</div>
+      <div class="nav-item" onclick="navigate('leaves',this)"><span class="icon">🌿</span> Leave Management</div>
+      <div class="nav-item" onclick="navigate('subjects',this)"><span class="icon">📚</span> Subject Performance</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <div class="nav-item" onclick="navigate('profile',this)"><span class="icon">👤</span> My Profile</div>
+      <div class="nav-item" onclick="alert('Logged out!')"><span class="icon">🚪</span> Logout</div>
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="topbar-title">Dashboard</div>
+      <div class="page-sub" id="topbar-sub">Welcome back, Dr. Priya Verma 👋 — Thursday, 2 April 2026</div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="refreshPage()" title="Refresh">🔄</button>
+      <button class="topbar-btn" onclick="toggleNotif()" title="Notifications" style="position:relative;">
+        🔔<div class="notif-dot"></div>
+      </button>
+      <div class="topbar-avatar" onclick="navigate('profile',null)" title="Profile">PV</div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-icon">👩‍🎓</div><div class="stat-val" style="color:var(--accent-cyan)">142</div><div class="stat-label">Total Students</div><div class="stat-change up">↑ 4 this sem</div></div>
+        <div class="stat-card"><div class="stat-icon">📖</div><div class="stat-val" style="color:var(--accent-teal)">5</div><div class="stat-label">Subjects Teaching</div><div class="stat-change up">↑ Stable</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" style="color:var(--accent-green)">87%</div><div class="stat-label">Avg Attendance</div><div class="stat-change up">↑ +2% vs last sem</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val" style="color:var(--accent-orange)">8.4</div><div class="stat-label">Class Avg CGPA</div><div class="stat-change down">↓ -0.1 vs last sem</div></div>
+      </div>
+
+      <!-- Class & Subject Selector -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="ci">📡</span> Subject Performance Tracker — Select Class</div>
+        <div class="radio-group">
+          <div class="radio-btn"><input type="radio" name="cls" id="c1" value="CSE-3A" checked onchange="updateSubjectChart()"><label for="c1">CSE — 3rd Year A</label></div>
+          <div class="radio-btn"><input type="radio" name="cls" id="c2" value="CSE-3B" onchange="updateSubjectChart()"><label for="c2">CSE — 3rd Year B</label></div>
+          <div class="radio-btn"><input type="radio" name="cls" id="c3" value="CSE-2A" onchange="updateSubjectChart()"><label for="c3">CSE — 2nd Year A</label></div>
+          <div class="radio-btn"><input type="radio" name="cls" id="c4" value="MCA-1" onchange="updateSubjectChart()"><label for="c4">MCA — 1st Year</label></div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="chart-container"><canvas id="subjectChart"></canvas></div>
+          </div>
+          <div id="subjectPerfTable"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span class="ci">📅</span> Attendance Overview <span style="margin-left:auto;font-size:12px;font-weight:400;color:var(--text-secondary)">Current Semester</span></div>
+          <div class="chart-container"><canvas id="attDonut"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ci">📈</span> Class CGPA Trend <span style="margin-left:auto;font-size:12px;font-weight:400;color:var(--text-secondary)">Per Semester</span></div>
+          <div class="chart-container"><canvas id="cgpaLine"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <div class="card-title"><span class="ci">📣</span> Recent Group Activity</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Group</th><th>Last Message</th><th>Sent By</th><th>Time</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>CSE-3A General</td><td>Midterm exam schedule updated</td><td>Dr. Priya Verma</td><td>Today 9:12 AM</td><td><button class="btn btn-outline btn-sm" onclick="navigate('group',null)">Open</button></td></tr>
+              <tr><td>CSE-3B Lab Group</td><td>Submit DSA lab files by Friday</td><td>Dr. Priya Verma</td><td>Yesterday</td><td><button class="btn btn-outline btn-sm" onclick="navigate('group',null)">Open</button></td></tr>
+              <tr><td>MCA-1 Batch</td><td>Leave notice: I'll be absent on 5th April</td><td>Dr. Priya Verma</td><td>2 days ago</td><td><button class="btn btn-outline btn-sm" onclick="navigate('group',null)">Open</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RESULT UPLOAD ===== -->
+    <div class="page" id="page-result">
+      <div class="section-header"><div><div class="section-title">📊 Upload Student Results</div><div class="section-sub">Upload marks, grades, and results for your classes</div></div></div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span class="ci">📤</span> Upload Result File</div>
+          <div class="form-group">
+            <label class="form-label">Select Class</label>
+            <select class="form-select">
+              <option>CSE — 3rd Year A</option><option>CSE — 3rd Year B</option><option>CSE — 2nd Year A</option><option>MCA — 1st Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <select class="form-select">
+              <option>Data Structures & Algorithms</option><option>Operating Systems</option><option>DBMS</option><option>Computer Networks</option><option>Software Engineering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exam Type</label>
+            <select class="form-select">
+              <option>Mid-Term</option><option>End-Term</option><option>Quiz</option><option>Assignment</option><option>Lab Practical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Upload File (.xlsx / .csv)</label>
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+              <div class="upload-icon">📁</div>
+              <div class="upload-text">Click or drag &amp; drop your result file</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">Supported: .xlsx, .csv, .pdf</div>
+              <input type="file" id="fileInput" style="display:none" onchange="handleFileUpload(event)">
+            </div>
+          </div>
+          <div id="uploadedFiles" style="margin-bottom:12px;"></div>
+          <button class="btn btn-primary" onclick="submitResult()" style="width:100%;">📤 Submit Results</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ci">✏️</span> Manual Entry</div>
+          <div class="form-group">
+            <label class="form-label">Select Class</label>
+            <select class="form-select"><option>CSE — 3rd Year A</option><option>CSE — 3rd Year B</option></select>
+          </div>
+          <div class="table-wrap" style="max-height:360px;overflow-y:auto;">
+            <table>
+              <thead><tr><th>Roll No</th><th>Student Name</th><th>Marks (/100)</th><th>Grade</th></tr></thead>
+              <tbody id="manualResultBody">
+                <tr><td>2201001</td><td>Aarav Singh</td><td><input class="form-input" style="width:70px;padding:4px 8px;" type="number" value="85" onchange="calcGrade(this)"></td><td><span class="badge badge-green">A+</span></td></tr>
+                <tr><td>2201002</td><td>Priya Mehta</td><td><input class="form-input" style="width:70px;padding:4px 8px;" type="number" value="72" onchange="calcGrade(this)"></td><td><span class="badge badge-cyan">B+</span></td></tr>
+                <tr><td>2201003</td><td>Rahul Sharma</td><td><input class="form-input" style="width:70px;padding:4px 8px;" type="number" value="91" onchange="calcGrade(this)"></td><td><span class="badge badge-green">O</span></td></tr>
+                <tr><td>2201004</td><td>Sneha Gupta</td><td><input class="form-input" style="width:70px;padding:4px 8px;" type="number" value="60" onchange="calcGrade(this)"></td><td><span class="badge badge-orange">B</span></td></tr>
+                <tr><td>2201005</td><td>Arjun Rao</td><td><input class="form-input" style="width:70px;padding:4px 8px;" type="number" value="44" onchange="calcGrade(this)"></td><td><span class="badge badge-red">F</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px;">
+            <button class="btn btn-outline" onclick="addResultRow()" style="flex:1;">+ Add Row</button>
+            <button class="btn btn-primary" onclick="saveManualResult()" style="flex:1;">💾 Save</button>
+          </div>
+        </div>
+      </div>
+      <!-- Previously Uploaded -->
+      <div class="card" style="margin-top:20px;">
+        <div class="card-title"><span class="ci">📂</span> Previously Uploaded Results</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Class</th><th>Subject</th><th>Exam</th><th>Uploaded On</th><th>Students</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>CSE-3A</td><td>DSA</td><td>Mid-Term</td><td>28 Mar 2026</td><td>42</td><td><span class="badge badge-green">Published</span></td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+              <tr><td>CSE-3B</td><td>OS</td><td>Quiz 2</td><td>25 Mar 2026</td><td>38</td><td><span class="badge badge-cyan">Pending</span></td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+              <tr><td>MCA-1</td><td>DBMS</td><td>End-Term</td><td>20 Mar 2026</td><td>30</td><td><span class="badge badge-green">Published</span></td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ATTENDANCE ===== -->
+    <div class="page" id="page-attendance">
+      <div class="section-header"><div><div class="section-title">📅 Attendance Management</div><div class="section-sub">Mark and track class & lab attendance</div></div></div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('att','class',this)">Class Attendance</div>
+        <div class="tab" onclick="switchTab('att','lab',this)">Lab Attendance</div>
+        <div class="tab" onclick="switchTab('att','overview',this)">Attendance Overview</div>
+      </div>
+      <!-- CLASS ATT -->
+      <div class="tab-pane active" id="att-class">
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-title"><span class="ci">🏫</span> Mark Class Attendance</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+            <div style="flex:1;min-width:160px;" class="form-group"><label class="form-label">Class</label>
+              <select class="form-select"><option>CSE-3A</option><option>CSE-3B</option><option>CSE-2A</option><option>MCA-1</option></select></div>
+            <div style="flex:1;min-width:160px;" class="form-group"><label class="form-label">Subject</label>
+              <select class="form-select"><option>DSA</option><option>OS</option><option>DBMS</option><option>CN</option></select></div>
+            <div style="flex:1;min-width:160px;" class="form-group"><label class="form-label">Date</label>
+              <input type="date" class="form-input" value="2026-04-02"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Roll No</th><th>Student Name</th><th>Present</th><th>Absent</th><th>Medical</th><th>Status</th></tr></thead>
+              <tbody id="attTableBody"></tbody>
+            </table>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px;">
+            <button class="btn btn-success" onclick="markAll('present')">✅ Mark All Present</button>
+            <button class="btn btn-danger" onclick="markAll('absent')">❌ Mark All Absent</button>
+            <button class="btn btn-primary" onclick="saveAttendance()" style="margin-left:auto;">💾 Save Attendance</button>
+          </div>
+        </div>
+      </div>
+      <!-- LAB ATT -->
+      <div class="tab-pane" id="att-lab">
+        <div class="card">
+          <div class="card-title"><span class="ci">🔬</span> Mark Lab Attendance</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+            <div style="flex:1;" class="form-group"><label class="form-label">Lab Group</label>
+              <select class="form-select"><option>CSE-3A Group 1</option><option>CSE-3A Group 2</option><option>CSE-3B Group 1</option></select></div>
+            <div style="flex:1;" class="form-group"><label class="form-label">Lab Subject</label>
+              <select class="form-select"><option>DSA Lab</option><option>OS Lab</option><option>DBMS Lab</option></select></div>
+            <div style="flex:1;" class="form-group"><label class="form-label">Session Date</label>
+              <input type="date" class="form-input" value="2026-04-02"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Roll No</th><th>Student Name</th><th>Batch</th><th>Present</th><th>Absent</th><th>Status</th></tr></thead>
+              <tbody id="labAttBody"></tbody>
+            </table>
+          </div>
+          <button class="btn btn-primary" onclick="saveAttendance()" style="margin-top:16px;">💾 Save Lab Attendance</button>
+        </div>
+      </div>
+      <!-- OVERVIEW -->
+      <div class="tab-pane" id="att-overview">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title"><span class="ci">📊</span> Monthly Attendance Heatmap — CSE-3A</div>
+            <div class="att-grid" id="attHeatmap"></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="ci">📉</span> Low Attendance Students (&lt;75%)</div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Name</th><th>Roll No</th><th>Attendance</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr><td>Arjun Rao</td><td>2201005</td><td><span class="badge badge-red">62%</span></td><td><button class="btn btn-outline btn-sm" onclick="sendAlert()">📨 Alert</button></td></tr>
+                  <tr><td>Kavya Nair</td><td>2201009</td><td><span class="badge badge-red">68%</span></td><td><button class="btn btn-outline btn-sm" onclick="sendAlert()">📨 Alert</button></td></tr>
+                  <tr><td>Mohit Batra</td><td>2201014</td><td><span class="badge badge-orange">73%</span></td><td><button class="btn btn-outline btn-sm" onclick="sendAlert()">📨 Alert</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MY GROUPS ===== -->
+    <div class="page" id="page-group">
+      <div class="section-header">
+        <div><div class="section-title">👥 My Groups</div><div class="section-sub">Manage class and lab groups</div></div>
+        <button class="btn btn-primary" onclick="openModal('createGroupModal')">+ Create Group</button>
+      </div>
+      <div class="grid-3" style="margin-bottom:24px;">
+        <div class="card" style="cursor:pointer;border-color:var(--accent-cyan)" onclick="openGroupChat('CSE-3A General')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-cyan),var(--accent-teal));display:flex;align-items:center;justify-content:center;font-size:20px;">📚</div>
+            <div><div style="font-weight:700;">CSE-3A General</div><div style="font-size:12px;color:var(--text-secondary);">42 members</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);">Last: Exam schedule updated · 2h ago</div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openGroupChat('CSE-3A General')">💬 Open Chat</button>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();sendGroupMsg('CSE-3A General')">📢 Broadcast</button>
+          </div>
+        </div>
+        <div class="card" style="cursor:pointer;" onclick="openGroupChat('CSE-3B Lab Group')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-purple),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:20px;">🔬</div>
+            <div><div style="font-weight:700;">CSE-3B Lab Group</div><div style="font-size:12px;color:var(--text-secondary);">38 members</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);">Last: Submit DSA files by Friday · Yesterday</div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openGroupChat('CSE-3B Lab Group')">💬 Open Chat</button>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();sendGroupMsg('CSE-3B Lab Group')">📢 Broadcast</button>
+          </div>
+        </div>
+        <div class="card" style="cursor:pointer;" onclick="openGroupChat('MCA-1 Batch')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-orange),#e85d04);display:flex;align-items:center;justify-content:center;font-size:20px;">🎯</div>
+            <div><div style="font-weight:700;">MCA-1 Batch</div><div style="font-size:12px;color:var(--text-secondary);">30 members</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);">Last: Leave notice posted · 2 days ago</div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openGroupChat('MCA-1 Batch')">💬 Open Chat</button>
+            <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();sendGroupMsg('MCA-1 Batch')">📢 Broadcast</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group Chat Area -->
+      <div class="card" id="groupChatArea" style="display:none;">
+        <div class="card-title" id="groupChatTitle">💬 Group Chat</div>
+        <div class="chat-wrap">
+          <div class="chat-msgs" id="groupMsgs"></div>
+          <div class="chat-input-row">
+            <input class="form-input" id="groupInput" placeholder="Type a message to the group..." onkeydown="if(event.key==='Enter')sendGroupMessage()">
+            <button class="btn btn-primary" onclick="sendGroupMessage()">Send ✈️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MESSAGES ===== -->
+    <div class="page" id="page-messages">
+      <div class="section-header"><div><div class="section-title">💬 Messages</div><div class="section-sub">Personal messages with students and staff</div></div></div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span class="ci">📥</span> Conversations</div>
+          <div style="margin-bottom:12px;"><input class="form-input" placeholder="🔍 Search conversations..." style="width:100%;"></div>
+          <div id="convList"></div>
+        </div>
+        <div class="card">
+          <div class="card-title" id="msgChatTitle"><span class="ci">💬</span> Select a conversation</div>
+          <div class="chat-wrap">
+            <div class="chat-msgs" id="personalMsgs"><div style="text-align:center;color:var(--text-muted);padding:40px;">Select a conversation to start chatting</div></div>
+            <div class="chat-input-row">
+              <input class="form-input" id="personalInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendPersonalMsg()">
+              <button class="btn btn-primary" onclick="sendPersonalMsg()">Send ✈️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LEAVE MANAGEMENT ===== -->
+    <div class="page" id="page-leaves">
+      <div class="section-header"><div><div class="section-title">🌿 Leave Management</div><div class="section-sub">Apply for leave — auto-notifies student groups</div></div></div>
+      <div class="leave-status-row">
+        <div class="leave-stat"><div class="leave-stat-val" style="color:var(--accent-green)">12</div><div class="leave-stat-lbl">Leaves Available</div></div>
+        <div class="leave-stat"><div class="leave-stat-val" style="color:var(--accent-orange)">3</div><div class="leave-stat-lbl">Leaves Used</div></div>
+        <div class="leave-stat"><div class="leave-stat-val" style="color:var(--accent-cyan)">1</div><div class="leave-stat-lbl">Pending Approval</div></div>
+        <div class="leave-stat"><div class="leave-stat-val" style="color:var(--accent-red)">0</div><div class="leave-stat-lbl">Rejected</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span class="ci">📝</span> Apply for Leave</div>
+          <div class="form-group"><label class="form-label">Leave Type</label>
+            <select class="form-select"><option>Medical Leave</option><option>Personal Leave</option><option>Academic Conference</option><option>Emergency Leave</option></select></div>
+          <div style="display:flex;gap:12px;">
+            <div class="form-group" style="flex:1;"><label class="form-label">From Date</label><input type="date" class="form-input" value="2026-04-05"></div>
+            <div class="form-group" style="flex:1;"><label class="form-label">To Date</label><input type="date" class="form-input" value="2026-04-07"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Reason</label>
+            <textarea class="form-textarea" id="leaveReason" placeholder="Describe reason for leave..."></textarea></div>
+          <div class="form-group">
+            <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="notifyGroups" checked style="width:15px;height:15px;accent-color:var(--accent-cyan);">
+              <span>Auto-notify all student groups with leave message</span>
+            </label>
+          </div>
+          <div class="form-group"><label class="form-label">Custom Group Message (optional)</label>
+            <textarea class="form-textarea" id="leaveGroupMsg" placeholder="e.g. Dear students, I will be on leave from 5th to 7th April. Please continue with self-study..."></textarea></div>
+          <button class="btn btn-primary" onclick="submitLeave()" style="width:100%;">📤 Submit Leave Application</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ci">📋</span> Leave History</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Medical Leave</td><td>15 Jan 2026</td><td>17 Jan 2026</td><td>3</td><td><span class="badge badge-green">Approved</span></td></tr>
+                <tr><td>Personal Leave</td><td>5 Feb 2026</td><td>5 Feb 2026</td><td>1</td><td><span class="badge badge-green">Approved</span></td></tr>
+                <tr><td>Academic Conference</td><td>20 Mar 2026</td><td>22 Mar 2026</td><td>3</td><td><span class="badge badge-green">Approved</span></td></tr>
+                <tr><td>Emergency Leave</td><td>10 Apr 2026</td><td>11 Apr 2026</td><td>2</td><td><span class="badge badge-orange">Pending</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SUBJECT PERFORMANCE ===== -->
+    <div class="page" id="page-subjects">
+      <div class="section-header"><div><div class="section-title">📚 Subject Performance Analytics</div><div class="section-sub">Detailed per-subject, per-class analytics</div></div></div>
+      <div class="radio-group" style="margin-bottom:20px;">
+        <div class="radio-btn"><input type="radio" name="scls" id="sc1" value="CSE-3A" checked onchange="updateSubjPage()"><label for="sc1">CSE-3A</label></div>
+        <div class="radio-btn"><input type="radio" name="scls" id="sc2" value="CSE-3B" onchange="updateSubjPage()"><label for="sc2">CSE-3B</label></div>
+        <div class="radio-btn"><input type="radio" name="scls" id="sc3" value="CSE-2A" onchange="updateSubjPage()"><label for="sc3">CSE-2A</label></div>
+        <div class="radio-btn"><input type="radio" name="scls" id="sc4" value="MCA-1" onchange="updateSubjPage()"><label for="sc4">MCA-1</label></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title"><span class="ci">📊</span> Subject-wise Average Marks — <span id="subjPageTitle">CSE-3A</span></div>
+        <div class="chart-container" style="height:260px;"><canvas id="subjectBarChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="ci">🏆</span> Subject Performance Summary</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Subject</th><th>Class Avg</th><th>Highest</th><th>Lowest</th><th>Pass %</th><th>Trend</th></tr></thead>
+            <tbody id="subjSummaryBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE ===== -->
+    <div class="page" id="page-profile">
+      <div class="section-header"><div><div class="section-title">👤 My Profile</div><div class="section-sub">View and update your profile information</div></div></div>
+      <div class="grid-2">
+        <div class="card" style="text-align:center;">
+          <div style="width:100px;height:100px;border-radius:50%;border:3px solid var(--accent-cyan);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:50px;background:var(--bg-secondary);">👩‍🏫</div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;">Dr. Priya Verma</div>
+          <div style="color:var(--text-secondary);font-size:13px;margin-top:4px;">Senior Professor · Computer Science</div>
+          <div style="margin-top:16px;display:flex;justify-content:center;gap:8px;">
+            <button class="btn btn-primary btn-sm">✏️ Edit Profile</button>
+            <button class="btn btn-outline btn-sm">🔑 Change Password</button>
+          </div>
+          <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;">
+            <div style="background:var(--bg-secondary);border-radius:10px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Employee ID</div><div style="font-weight:600;margin-top:2px;">TCH-4421</div></div>
+            <div style="background:var(--bg-secondary);border-radius:10px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Department</div><div style="font-weight:600;margin-top:2px;">CSE</div></div>
+            <div style="background:var(--bg-secondary);border-radius:10px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Designation</div><div style="font-weight:600;margin-top:2px;">Sr. Professor</div></div>
+            <div style="background:var(--bg-secondary);border-radius:10px;padding:12px;"><div style="font-size:11px;color:var(--text-muted);">Experience</div><div style="font-weight:600;margin-top:2px;">12 Years</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="ci">✏️</span> Edit Information</div>
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="Dr. Priya Verma"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="priya.verma@college.edu"></div>
+          <div class="form-group"><label class="form-label">Phone</label><input class="form-input" type="tel" value="+91 98765 43210"></div>
+          <div class="form-group"><label class="form-label">Office Room</label><input class="form-input" value="CSE Block, Room 302"></div>
+          <div class="form-group"><label class="form-label">Specialization</label><input class="form-input" value="Data Structures, Algorithms, AI/ML"></div>
+          <div class="form-group"><label class="form-label">Office Hours</label><input class="form-input" value="Mon–Fri 10:00 AM – 12:00 PM"></div>
+          <button class="btn btn-primary" onclick="showToast('✅ Profile updated successfully!')" style="width:100%;">💾 Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODALS -->
+<div class="modal-overlay" id="createGroupModal">
+  <div class="modal">
+    <div class="modal-title">➕ Create New Group</div>
+    <div class="form-group"><label class="form-label">Group Name</label><input class="form-input" id="newGroupName" placeholder="e.g. CSE-3A Lab Group 2"></div>
+    <div class="form-group"><label class="form-label">Class</label><select class="form-select"><option>CSE-3A</option><option>CSE-3B</option><option>MCA-1</option></select></div>
+    <div class="form-group"><label class="form-label">Group Type</label><select class="form-select"><option>General</option><option>Lab Group</option><option>Project Group</option><option>Study Group</option></select></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="Group purpose..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('createGroupModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="createGroup()">Create Group</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="broadcastModal">
+  <div class="modal">
+    <div class="modal-title" id="broadcastTitle">📢 Broadcast to Group</div>
+    <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" id="broadcastMsg" placeholder="Type your broadcast message..."></textarea></div>
+    <div class="form-group"><label class="form-label">Priority</label><select class="form-select"><option>Normal</option><option>Important</option><option>Urgent</option></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('broadcastModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="sendBroadcast()">📤 Send Broadcast</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">✅ Action completed!</div>
+<script src="Teacher_dash.js"></script>
+</body>
+</html>
