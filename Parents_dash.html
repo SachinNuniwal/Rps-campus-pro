@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="Parents_dash.css">
+</head>
+
+<body>
+    <!-- ═══════════════ PARENT DASHBOARD ═══════════════ -->
+    <div id="parent-dashboard">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-profile">
+                <div class="avatar-wrap">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Parent" />
+                </div>
+                <div class="student-name">Mr. Rajesh Sharma</div>
+                <div class="student-meta">Parent Dashboard</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item active" onclick="showParentPage('overview',this)">
+                    <i class="fas fa-home"></i> Overview
+                </div>
+
+                <div class="nav-item" onclick="showParentPage('children',this)">
+                    <i class="fas fa-child"></i> My Children
+                </div>
+
+                <div class="nav-item" onclick="showParentPage('performance',this)">
+                    <i class="fas fa-chart-line"></i> Performance
+                </div>
+
+                <div class="nav-item" onclick="showParentPage('attendance',this)">
+                    <i class="fas fa-calendar-check"></i> Attendance
+                </div>
+
+                <div class="nav-item" onclick="showParentPage('fees',this)">
+                    <i class="fas fa-rupee-sign"></i> Fees
+                </div>
+
+                <div class="nav-item" onclick="showParentPage('alerts',this)">
+                    <i class="fas fa-exclamation-triangle"></i> Alerts
+                </div>
+
+                <div class="nav-item" onclick="showParentPage('messages',this)">
+                    <i class="fas fa-comments"></i> Messages
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main -->
+        <div class="main-content">
+
+            <!-- Header -->
+            <header class="top-header">
+                <h2>Parent Overview</h2>
+
+                <!-- Child Selector -->
+                <select id="childSelector" onchange="switchChild()">
+                    <option value="rahul">Rahul Sharma (CSE)</option>
+                    <option value="priya">Priya Sharma (ECE)</option>
+                </select>
+            </header>
+
+            <!-- OVERVIEW -->
+            <div class="page active" id="parent-overview">
+
+                <div class="stats-row">
+
+                    <div class="stat-card">
+                        <h3>8.4</h3>
+                        <p>Child CGPA</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>82%</h3>
+                        <p>Attendance</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>₹45K</h3>
+                        <p>Pending Fees</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>3</h3>
+                        <p>Active Alerts</p>
+                    </div>
+
+                </div>
+
+                <!-- AI Summary -->
+                <div class="chart-card">
+                    <h3>📊 Performance Insight</h3>
+                    <p>
+                        Rahul is performing well academically with a steady CGPA increase.
+                        However, attendance dropped below 85% in 2 subjects.
+                        Fee payment pending — action required before deadline.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- CHILDREN PAGE -->
+            <div class="page" id="parent-children">
+                <h3>👨‍👩‍👧 Children Overview</h3>
+
+                <div class="group-list">
+
+                    <div class="group-item">
+                        <div>
+                            <h4>Rahul Sharma</h4>
+                            <p>CSE • 3rd Year • CGPA: 8.4</p>
+                        </div>
+                    </div>
+
+                    <div class="group-item">
+                        <div>
+                            <h4>Priya Sharma</h4>
+                            <p>ECE • 1st Year • CGPA: 8.9</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- PERFORMANCE -->
+            <div class="page" id="parent-performance">
+                <h3>📈 Performance Analytics</h3>
+                <canvas id="parentPerformanceChart"></canvas>
+            </div>
+
+            <!-- ATTENDANCE -->
+            <div class="page" id="parent-attendance">
+                <h3>📅 Attendance Monitoring</h3>
+
+                <div class="att-grid">
+                    <div class="att-card">DSA - 78%</div>
+                    <div class="att-card">OS - 85%</div>
+                    <div class="att-card">DBMS - 90%</div>
+                </div>
+            </div>
+
+            <!-- FEES -->
+            <div class="page" id="parent-fees">
+                <h3>💰 Fee Management</h3>
+
+                <table class="subject-table">
+                    <tr>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Tuition</td>
+                        <td>₹40,000</td>
+                        <td>Paid</td>
+                    </tr>
+                    <tr>
+                        <td>Hostel</td>
+                        <td>₹25,000</td>
+                        <td>Pending</td>
+                    </tr>
+                </table>
+
+                <button class="btn">Pay Now</button>
+            </div>
+
+            <!-- ALERTS -->
+            <div class="page" id="parent-alerts">
+                <h3>🚨 Important Alerts</h3>
+
+                <div class="alert-card">⚠ Low attendance in DSA</div>
+                <div class="alert-card">💰 Fee due in 5 days</div>
+                <div class="alert-card">📉 Marks dropped in OS</div>
+            </div>
+
+            <!-- MESSAGES -->
+            <div class="page" id="parent-messages">
+                <h3>💬 Teacher Communication</h3>
+
+                <div class="chat-window">
+                    <div class="chat-header-w">Prof. Sharma</div>
+
+                    <div class="chat-messages">
+                        <div>Teacher: Rahul needs to improve attendance.</div>
+                        <div>You: Thank you, will take care.</div>
+                    </div>
+
+                    <input placeholder="Type message..." />
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="Parents_dash.js"></script>
+</body>
+
+</html>

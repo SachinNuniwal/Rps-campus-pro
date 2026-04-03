@@ -393,6 +393,7 @@ function openStudentDetail(id) {
   }, 100);
 
   // Attendance tab
+  const studentSubjects = getClassSubjects(s.class);
   document.getElementById('studentAttContent').innerHTML = `
     <div class="mini-stats">
       <div class="mini-stat"><div class="mini-stat-val" style="color:${s.att >= 75 ? 'var(--accent-green)' : 'var(--accent-red)'}">${s.att}%</div><div class="mini-stat-lbl">Overall Att.</div></div>
@@ -403,7 +404,7 @@ function openStudentDetail(id) {
     <div class="card"><div class="card-title">📅 Subject-wise Attendance</div>
     <div class="table-wrap"><table>
       <thead><tr><th>Subject</th><th>Total Classes</th><th>Attended</th><th>Attendance %</th><th>Status</th></tr></thead>
-      <tbody>${['DSA', 'OS', 'DBMS', 'CN', 'SE'].map(sub => { const tot = 40; const att = Math.min(tot, Math.max(0, Math.floor(tot * s.att / 100 + Math.random() * 4 - 2))); const pct = Math.round(att / tot * 100); return `<tr><td>${sub}</td><td>${tot}</td><td>${att}</td><td>${pct}%</td><td><span class="badge ${pct >= 75 ? 'badge-green' : 'badge-red'}">${pct >= 75 ? 'OK' : 'Low'}</span></td></tr>`; }).join('')}
+      <tbody>${studentSubjects.map(sub => { const tot = 40; const att = Math.min(tot, Math.max(0, Math.floor(tot * s.att / 100 + Math.random() * 4 - 2))); const pct = Math.round(att / tot * 100); return `<tr><td>${sub}</td><td>${tot}</td><td>${att}</td><td>${pct}%</td><td><span class="badge ${pct >= 75 ? 'badge-green' : 'badge-red'}">${pct >= 75 ? 'OK' : 'Low'}</span></td></tr>`; }).join('')}
       </tbody>
     </table></div></div>
     <div class="card"><div class="card-title">📅 Monthly Attendance</div>
@@ -761,6 +762,8 @@ function initResults() {
     { cls: 'CSE-3A', sub: 'CN', exam: 'End-Term', tot: 42, pass: 91, avg: 80 },
     { cls: 'CSE-3B', sub: 'SE', exam: 'Assignment', tot: 38, pass: 100, avg: 88 },
   ].map(r => `<tr><td>${r.cls}</td><td>${r.sub}</td><td><span class="badge badge-purple">${r.exam}</span></td><td>${r.tot}</td><td>${r.pass}%</td><td>${r.avg}/100</td><td><span class="badge badge-green">Published</span></td><td><button class="btn btn-outline btn-xs" onclick="showToast('📋 Viewing ${r.sub} results')">View</button></td></tr>`).join('');
+  populateResultClassDropdowns();
+  renderManualResultsList();
 }
 
 // ===== ATTENDANCE =====
@@ -771,6 +774,7 @@ function initAttendance() {
   if (c2 && !c2._chart) c2._chart = new Chart(c2.getContext('2d'), { type: 'line', data: { labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'], datasets: [{ label: 'Avg Attendance', data: [88, 85, 82, 86, 84, 79, 87, 89, 85], borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,.1)', tension: .4, fill: true, pointRadius: 4, pointBackgroundColor: '#00d4ff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { min: 70, max: 100, grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#8b949e' } }, x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#8b949e' } } } } });
   const lb = document.getElementById('lowAttBody');
   if (lb) lb.innerHTML = students.filter(s => s.att < 80).map(s => `<tr><td style="color:var(--text-muted)">${s.id}</td><td><a href="#" onclick="openStudentDetail('${s.id}')" style="color:var(--accent-cyan);text-decoration:none;">${s.name}</a></td><td>${s.class}</td><td><span class="badge ${s.att < 75 ? 'badge-red' : 'badge-orange'}">${s.att}%</span></td><td>Class Teacher</td><td style="display:flex;gap:5px;"><button class="btn btn-outline btn-xs" onclick="msgStudent('${s.id}')">📨 Alert</button><button class="btn btn-outline btn-xs" onclick="openStudentDetail('${s.id}')">👁 View</button></td></tr>`).join('');
+  populateAttClassDropdown(); // ✅ YE LINE ADD KI
 }
 
 // ===== FEE =====
@@ -1050,3 +1054,233 @@ window.onload = () => {
   // Set today's date as default for event
   document.getElementById('evtDate').value = new Date().toISOString().split('T')[0];
 };
+// ── HELPER: get subjects for a class ──────────────────────
+function getClassSubjects(className) {
+  const cls = createdClasses.find(c => c.name === className);
+  return cls ? cls.subjects : [];
+}
+
+function populateSubjectDropdown(selectId, className) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  const subs = getClassSubjects(className);
+  sel.innerHTML = subs.length
+    ? subs.map(s => `<option value="${s}">${s}</option>`).join('')
+    : '<option value="">— No subjects found —</option>';
+}
+
+function getClassStudents(className) {
+  return students.filter(s => s.class === className);
+}
+
+function populateManualResultStudents(className) {
+  const tbody = document.getElementById('manualResultStudentRows');
+  if (!tbody) return;
+  const classStudents = getClassStudents(className);
+  if (!classStudents.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No students found for ${className}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = classStudents.map(s => `
+    <tr>
+      <td style="color:var(--text-muted);font-size:12px;">${s.id}</td>
+      <td style="font-weight:600;">${s.name}</td>
+      <td><input type="number" class="form-input" id="marks_${s.id}" placeholder="0"
+           min="0" max="100" style="width:90px;padding:5px 8px;font-size:12px;"
+           oninput="validateMarks(this)"></td>
+      <td id="grade_${s.id}" style="color:var(--text-muted);font-size:13px;">—</td>
+    </tr>`).join('');
+}
+
+function validateMarks(input) {
+  const max = parseInt(document.getElementById('manualMaxMarks')?.value) || 100;
+  let val = parseInt(input.value);
+  if (isNaN(val)) { input.value = ''; return; }
+  if (val < 0) input.value = 0;
+  if (val > max) input.value = max;
+  const id = input.id.replace('marks_', '');
+  const gradeEl = document.getElementById('grade_' + id);
+  if (!gradeEl) return;
+  const pct = (parseInt(input.value) / max) * 100;
+  if (isNaN(pct)) { gradeEl.textContent = '—'; return; }
+  const grade = pct >= 90 ? 'O' : pct >= 80 ? 'A+' : pct >= 70 ? 'A' : pct >= 60 ? 'B+' : pct >= 50 ? 'B' : pct >= 40 ? 'C' : 'F';
+  const color = pct >= 60 ? 'var(--accent-green)' : pct >= 40 ? 'var(--accent-orange)' : 'var(--accent-red)';
+  gradeEl.innerHTML = `<span style="color:${color};font-weight:700;">${grade}</span>`;
+}
+
+let manualResults = [];
+
+function submitManualResult() {
+  const cls = document.getElementById('manualResultClass')?.value;
+  const sub = document.getElementById('manualResultSubject')?.value;
+  const exam = document.getElementById('manualResultExam')?.value;
+  const max = parseInt(document.getElementById('manualMaxMarks')?.value) || 100;
+  if (!cls || !sub) { showToast('⚠️ Select class and subject first!'); return; }
+  const classStudents = getClassStudents(cls);
+  if (!classStudents.length) { showToast('⚠️ No students in this class!'); return; }
+  const entries = classStudents.map(s => {
+    const marksEl = document.getElementById('marks_' + s.id);
+    const marks = marksEl ? parseInt(marksEl.value) : null;
+    if (marks === null || isNaN(marks)) return null;
+    const pct = (marks / max) * 100;
+    const grade = pct >= 90 ? 'O' : pct >= 80 ? 'A+' : pct >= 70 ? 'A' : pct >= 60 ? 'B+' : pct >= 50 ? 'B' : pct >= 40 ? 'C' : 'F';
+    return { id: s.id, name: s.name, marks, max, pct: pct.toFixed(1), grade, pass: pct >= 40 };
+  }).filter(Boolean);
+  if (!entries.length) { showToast('⚠️ Enter marks for at least one student!'); return; }
+  const pass = entries.filter(e => e.pass).length;
+  const avg = (entries.reduce((a, b) => a + b.marks, 0) / entries.length).toFixed(1);
+  const highest = Math.max(...entries.map(e => e.marks));
+  const lowest = Math.min(...entries.map(e => e.marks));
+  manualResults.unshift({ cls, sub, exam, max, entries, pass, total: entries.length, avg, highest, lowest, date: new Date().toLocaleDateString('en-IN') });
+  renderManualResultsList();
+  showToast(`✅ Result submitted! ${pass}/${entries.length} passed · Avg: ${avg}/${max}`);
+  document.getElementById('manualResultFormSection').style.display = 'none';
+  document.getElementById('manualResultListSection').style.display = 'block';
+  document.getElementById('manualTabForm').classList.remove('active');
+  document.getElementById('manualTabList').classList.add('active');
+}
+
+function renderManualResultsList() {
+  const container = document.getElementById('manualResultsList');
+  if (!container) return;
+  if (!manualResults.length) {
+    container.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:40px;">No results submitted yet. Use the Entry Form tab to add results.</div>`;
+    return;
+  }
+  container.innerHTML = manualResults.map((r, idx) => {
+    const passRate = ((r.pass / r.total) * 100).toFixed(0);
+    const barColor = passRate >= 75 ? 'var(--accent-green)' : passRate >= 50 ? 'var(--accent-orange)' : 'var(--accent-red)';
+    return `
+    <div class="card" style="margin-bottom:14px;border-left:3px solid ${barColor};">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;">${r.sub} — ${r.cls} <span class="badge badge-purple" style="font-size:10px;">${r.exam}</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:3px;">Max Marks: ${r.max} · Submitted: ${r.date}</div>
+        </div>
+        <div style="display:flex;gap:16px;text-align:center;">
+          <div><div style="font-size:18px;font-weight:700;color:var(--accent-cyan)">${r.avg}</div><div style="font-size:10px;color:var(--text-muted)">Avg</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:var(--accent-green)">${r.highest}</div><div style="font-size:10px;color:var(--text-muted)">Highest</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:var(--accent-red)">${r.lowest}</div><div style="font-size:10px;color:var(--text-muted)">Lowest</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:${barColor}">${passRate}%</div><div style="font-size:10px;color:var(--text-muted)">Pass Rate</div></div>
+        </div>
+        <button class="btn btn-danger btn-xs" onclick="deleteManualResult(${idx})">🗑 Delete</button>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span>Pass Rate</span><span>${r.pass}/${r.total} passed</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${passRate}%;background:${barColor};"></div></div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Roll No</th><th>Name</th><th>Marks</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
+        <tbody>${r.entries.map(e => {
+      const gc = e.pct >= 60 ? 'badge-green' : e.pct >= 40 ? 'badge-orange' : 'badge-red';
+      return `<tr>
+            <td style="color:var(--text-muted);font-size:12px;">${e.id}</td>
+            <td style="font-weight:600;">${e.name}</td>
+            <td><strong>${e.marks}</strong>/${r.max}</td>
+            <td>${e.pct}%</td>
+            <td><span class="badge ${gc}">${e.grade}</span></td>
+            <td><span class="badge ${e.pass ? 'badge-green' : 'badge-red'}">${e.pass ? 'Pass' : 'Fail'}</span></td>
+          </tr>`;
+    }).join('')}</tbody>
+      </table></div>
+    </div>`;
+  }).join('');
+}
+
+function deleteManualResult(idx) {
+  manualResults.splice(idx, 1);
+  renderManualResultsList();
+  showToast('🗑 Result record deleted');
+}
+
+function switchManualTab(tab) {
+  document.getElementById('manualTabForm').classList.toggle('active', tab === 'form');
+  document.getElementById('manualTabList').classList.toggle('active', tab === 'list');
+  document.getElementById('manualResultFormSection').style.display = tab === 'form' ? 'block' : 'none';
+  document.getElementById('manualResultListSection').style.display = tab === 'list' ? 'block' : 'none';
+  if (tab === 'list') renderManualResultsList();
+}
+
+function populateResultClassDropdowns() {
+  const opts = createdClasses.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  const upClass = document.getElementById('up-class');
+  if (upClass) { upClass.innerHTML = opts; onUploadClassChange(); }
+  const manualClass = document.getElementById('manualResultClass');
+  if (manualClass) { manualClass.innerHTML = opts; onManualClassChange(); }
+}
+
+function onUploadClassChange() {
+  const cls = document.getElementById('up-class')?.value;
+  if (cls) populateSubjectDropdown('up-subject', cls);
+}
+
+function onManualClassChange() {
+  const cls = document.getElementById('manualResultClass')?.value;
+  if (!cls) return;
+  populateSubjectDropdown('manualResultSubject', cls);
+  populateManualResultStudents(cls);
+}
+
+function populateAttClassDropdown() {
+  const sel = document.getElementById('attMarkClass');
+  if (!sel) return;
+  sel.innerHTML = createdClasses.map(c => `<option value="${c.name}">${c.name} — ${c.year}</option>`).join('');
+  onAttClassChange();
+}
+
+function onAttClassChange() {
+  const cls = document.getElementById('attMarkClass')?.value;
+  if (!cls) return;
+  populateSubjectDropdown('attMarkSubject', cls);
+  populateAttStudentRows(cls);
+}
+
+function populateAttStudentRows(className) {
+  const tbody = document.getElementById('attMarkStudentRows');
+  if (!tbody) return;
+  const classStudents = getClassStudents(className);
+  if (!classStudents.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:20px;">No students found for ${className}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = classStudents.map(s => `
+    <tr>
+      <td style="color:var(--text-muted);font-size:12px;">${s.id}</td>
+      <td style="font-weight:600;">${s.name}</td>
+      <td style="text-align:center;">
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;">
+            <input type="radio" name="att_${s.id}" value="P" checked style="accent-color:var(--accent-green);"> <span style="color:var(--accent-green);">P</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;">
+            <input type="radio" name="att_${s.id}" value="A" style="accent-color:var(--accent-red);"> <span style="color:var(--accent-red);">A</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;">
+            <input type="radio" name="att_${s.id}" value="L" style="accent-color:var(--accent-orange);"> <span style="color:var(--accent-orange);">L</span>
+          </label>
+        </div>
+      </td>
+      <td><input class="form-input" placeholder="Optional note..." style="font-size:11px;padding:4px 8px;width:140px;"></td>
+    </tr>`).join('');
+}
+
+function markAllPresent() {
+  document.querySelectorAll('#attMarkStudentRows input[type=radio][value=P]').forEach(r => r.checked = true);
+}
+
+function submitAttendance() {
+  const cls = document.getElementById('attMarkClass')?.value;
+  const sub = document.getElementById('attMarkSubject')?.value;
+  const date = document.getElementById('attMarkDate')?.value;
+  if (!cls || !sub || !date) { showToast('⚠️ Select class, subject and date!'); return; }
+  const classStudents = getClassStudents(cls);
+  let present = 0, absent = 0, leave = 0;
+  classStudents.forEach(s => {
+    const sel = document.querySelector(`input[name="att_${s.id}"]:checked`);
+    const val = sel ? sel.value : 'P';
+    if (val === 'P') present++;
+    else if (val === 'A') absent++;
+    else leave++;
+  });
+  showToast(`✅ Attendance saved! ${cls} · ${sub} · ${date} — P:${present} A:${absent} L:${leave}`);
+}
