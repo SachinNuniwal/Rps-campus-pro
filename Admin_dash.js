@@ -227,6 +227,7 @@ function initDashboard() {
   }
 }
 
+
 // ===== EVENTS =====
 function initEvents() {
   const now = new Date();
@@ -1266,6 +1267,90 @@ function populateAttStudentRows(className) {
 
 function markAllPresent() {
   document.querySelectorAll('#attMarkStudentRows input[type=radio][value=P]').forEach(r => r.checked = true);
+}
+// ===== ADD / REMOVE TEACHER =====
+
+function addNewTeacher() {
+  const name = document.getElementById('newTeacherName').value.trim();
+  const id = document.getElementById('newTeacherId').value.trim();
+  const dept = document.getElementById('newTeacherDept').value;
+  const exp = document.getElementById('newTeacherExp').value.trim() || '0 yrs';
+  const email = document.getElementById('newTeacherEmail').value.trim();
+  const phone = document.getElementById('newTeacherPhone').value.trim();
+  const subRaw = document.getElementById('newTeacherSubjects').value.trim();
+  const status = document.getElementById('newTeacherStatus').value;
+  const qual = document.getElementById('newTeacherQual').value.trim();
+
+  // Validation
+  if (!name) { showToast('⚠️ Full Name is required!'); return; }
+  if (!id) { showToast('⚠️ Employee ID is required!'); return; }
+  if (!email) { showToast('⚠️ Email is required!'); return; }
+
+  // Duplicate ID check
+  if (teachers.find(t => t.id === id)) {
+    showToast('⚠️ A teacher with this Employee ID already exists!');
+    return;
+  }
+
+  // Collect checked classes
+  const checkedClasses = [...document.querySelectorAll('#newTeacherClassChips input[type=checkbox]:checked')]
+    .map(cb => cb.value);
+
+  // Parse subjects
+  const subjects = subRaw ? subRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  // Build teacher object
+  const newTeacher = {
+    id,
+    name,
+    dept,
+    subjects,
+    classes: checkedClasses,
+    leavesUsed: 0,
+    status,
+    exp,
+    email,
+    phone: phone || 'N/A',
+    qual: qual || 'N/A',
+  };
+
+  teachers.push(newTeacher);
+
+  // Reset form
+  ['newTeacherName', 'newTeacherId', 'newTeacherEmail', 'newTeacherPhone',
+    'newTeacherSubjects', 'newTeacherExp', 'newTeacherQual'].forEach(fid => {
+      const el = document.getElementById(fid);
+      if (el) el.value = '';
+    });
+  document.querySelectorAll('#newTeacherClassChips input[type=checkbox]')
+    .forEach(cb => cb.checked = false);
+
+  closeModal('addTeacherModal');
+  initTeachers();
+  showToast(`✅ Teacher "${name}" added successfully!`);
+}
+
+// ── Remove teacher ──────────────────────────────────────
+let teacherToRemoveId = null;
+
+function openRemoveTeacher(id) {
+  const t = teachers.find(x => x.id === id);
+  if (!t) return;
+  teacherToRemoveId = id;
+  document.getElementById('removeTeacherConfirmName').textContent =
+    `Remove "${t.name}" (${t.id}) from the system?`;
+  openModal('removeTeacherModal');
+}
+
+function confirmRemoveTeacher() {
+  if (!teacherToRemoveId) return;
+  const idx = teachers.findIndex(t => t.id === teacherToRemoveId);
+  const name = idx > -1 ? teachers[idx].name : '';
+  if (idx > -1) teachers.splice(idx, 1);
+  teacherToRemoveId = null;
+  closeModal('removeTeacherModal');
+  initTeachers();
+  showToast(`🗑️ Teacher "${name}" removed successfully.`);
 }
 
 function submitAttendance() {

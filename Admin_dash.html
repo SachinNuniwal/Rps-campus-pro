@@ -362,7 +362,10 @@
             <div class="section-title">👩‍🏫 Teacher Directory</div>
             <div class="section-sub">Click any teacher to view full profile</div>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="exportData()">⬇️ Export</button>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary btn-sm" onclick="openModal('addTeacherModal')">➕ Add Teacher</button>
+            <button class="btn btn-outline btn-sm" onclick="exportData()">⬇️ Export</button>
+          </div>
         </div>
         <div class="search-bar"><span>🔍</span><input placeholder="Search teachers..."
             oninput="searchTeachers(this.value)" id="teacherSearch"></div>
@@ -1360,6 +1363,112 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
+  <!-- ADD TEACHER MODAL -->
+  <div class="modal-overlay" id="addTeacherModal">
+    <div class="modal modal-lg">
+      <div class="modal-title">➕ Add New Teacher</div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input class="form-input" id="newTeacherName" placeholder="e.g. Dr. Anjali Mehta">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Employee ID *</label>
+          <input class="form-input" id="newTeacherId" placeholder="e.g. TCH-5001">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Department *</label>
+          <select class="form-select" id="newTeacherDept">
+            <option>CSE</option>
+            <option>Maths</option>
+            <option>Physics</option>
+            <option>Electronics</option>
+            <option>Humanities</option>
+            <option>MCA</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Experience</label>
+          <input class="form-input" id="newTeacherExp" placeholder="e.g. 5 yrs">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input class="form-input" id="newTeacherEmail" type="email" placeholder="e.g. anjali@college.edu">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input class="form-input" id="newTeacherPhone" placeholder="e.g. +91 98760 00099">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Subjects (comma separated)</label>
+        <input class="form-input" id="newTeacherSubjects" placeholder="e.g. AI, ML, Python">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Assigned Classes</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;" id="newTeacherClassChips">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="checkbox"
+              value="CSE-3A" style="accent-color:var(--accent-cyan);"> CSE-3A</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="checkbox"
+              value="CSE-3B" style="accent-color:var(--accent-cyan);"> CSE-3B</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="checkbox"
+              value="CSE-2A" style="accent-color:var(--accent-cyan);"> CSE-2A</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="checkbox"
+              value="MCA-1" style="accent-color:var(--accent-cyan);"> MCA-1</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="checkbox"
+              value="CSE-4A" style="accent-color:var(--accent-cyan);"> CSE-4A</label>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="newTeacherStatus">
+            <option>Active</option>
+            <option>On Leave</option>
+            <option>Inactive</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Qualification</label>
+          <input class="form-input" id="newTeacherQual" placeholder="e.g. Ph.D. Computer Science">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('addTeacherModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addNewTeacher()">✅ Add Teacher</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- CONFIRM REMOVE TEACHER MODAL -->
+  <div class="modal-overlay" id="removeTeacherModal">
+    <div class="modal">
+      <div class="modal-title">🗑️ Remove Teacher</div>
+      <div style="text-align:center;padding:10px 0 20px;">
+        <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+        <div style="font-size:15px;font-weight:600;" id="removeTeacherConfirmName">Are you sure?</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">This will permanently remove the teacher
+          from the system. This action cannot be undone.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('removeTeacherModal')">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmRemoveTeacher()">🗑️ Yes, Remove</button>
+      </div>
+    </div>
+  </div>
   <script src="Admin_dash.js"></script>
 </body>
 
