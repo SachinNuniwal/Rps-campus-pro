@@ -127,4 +127,4 @@ function sendMsg() {
     box.innerHTML += `<div class="msg mine"><div class="msg-bubble">${inp.value}</div><div class="msg-time">${now}</div></div>`;
     inp.value = '';
     box.scrollTop = box.scrollHeight;
-}
+}   
