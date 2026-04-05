@@ -129,11 +129,12 @@ export default function Topbar({
                     onClick={onProfileClick}
                     className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-[#21262d] transition-all group"
                 >
-                    <div
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-[16px] flex-shrink-0"
-                        style={{ background: 'linear-gradient(135deg, #f0a500, #ff7b29)' }}
-                    >
-                        🧑‍💼
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[16px] flex-shrink-0 overflow-hidden"
+                        style={{ background: 'linear-gradient(135deg, #f0a500, #ff7b29)' }}>
+                        {profile?.photo
+                            ? <img src={profile.photo} alt="profile" className="w-full h-full object-cover" />
+                            : '🧑‍💼'
+                        }
                     </div>
                     <div className="text-left hidden sm:block">
                         <div className="text-[12px] font-semibold text-[#e6edf3] leading-tight group-hover:text-cyan-400 transition-colors">

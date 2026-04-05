@@ -194,12 +194,32 @@ export default function AdminDashboard() {
 
             {/* PROFILE MODAL */}
             <Modal open={showProfileModal} onClose={() => setShowProfileModal(false)} title="👤 Edit Profile">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 cursor-pointer border-2 border-[#30363d] hover:border-cyan-400 transition-all"
+                <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 cursor-pointer border-2 border-[#30363d] hover:border-cyan-400 transition-all overflow-hidden"
                     style={{ background: 'linear-gradient(135deg, #f0a500, #ff7b29)' }}
-                    onClick={() => showToast('📷 Photo upload — coming soon!')}>
-                    🧑‍💼
+                    onClick={() => document.getElementById('photoInput').click()}>
+                    {profile.photo
+                        ? <img src={profile.photo} alt="profile" className="w-full h-full object-cover rounded-full" />
+                        : '🧑‍💼'
+                    }
                 </div>
-                <div className="text-center text-[11px] text-[#8b949e] mb-4">Click to change photo</div>
+                <input
+                    id="photoInput"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const base64 = ev.target.result;
+                            localStorage.setItem('adminPhoto', base64);
+                            setProfile(p => ({ ...p, photo: base64 }));
+                            setEditProfile(p => ({ ...p, photo: base64 }));
+                        };
+                        reader.readAsDataURL(file);
+                    }}
+                />
                 <FormGroup label="Full Name">
                     <Input value={editProfile.name} onChange={e => setEditProfile(p => ({ ...p, name: e.target.value }))} />
                 </FormGroup>

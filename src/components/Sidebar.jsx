@@ -55,8 +55,11 @@ export default function Sidebar({ activePage, onNavigate, onLogout, profile, pen
                 className="px-4 py-3.5 border-b border-[#30363d] text-center cursor-pointer hover:bg-[#21262d] transition-colors"
                 onClick={onProfileClick}
             >
-                <div className="relative inline-block text-4xl mb-1.5">
-                    🧑‍💼
+                <div className="relative inline-block mb-1.5">
+                    {profile?.photo
+                        ? <img src={profile.photo} alt="profile" className="w-12 h-12 rounded-full object-cover" />
+                        : <span className="text-4xl">🧑‍💼</span>
+                    }
                     <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-[#161b22]" />
                 </div>
                 <div className="font-bold text-[15px]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>{profile?.name}</div>
