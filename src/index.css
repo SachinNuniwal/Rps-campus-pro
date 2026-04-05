@@ -45,3 +45,14 @@ body {
 select option {
   background: #161b22;
 }
+
+button,
+a,
+[role="button"],
+select,
+label[for],
+input[type="checkbox"],
+input[type="radio"],
+input[type="file"] {
+    cursor: pointer !important;
+}
