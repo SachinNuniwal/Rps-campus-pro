@@ -59,8 +59,8 @@ export default function Sidebar({ activePage, onNavigate, onLogout, profile, pen
                     🧑‍💼
                     <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-[#161b22]" />
                 </div>
-                <div className="font-bold text-[15px]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>{profile.name}</div>
-                <div className="text-[10px] text-[#8b949e] leading-relaxed mt-0.5">{profile.desig}<br />Admin Access · Level 5</div>
+                <div className="font-bold text-[15px]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>{profile?.name}</div>
+                <div className="text-[10px] text-[#8b949e] leading-relaxed mt-0.5">{profile?.desig}<br />Admin Access · Level 5</div>
                 <div className="mt-1.5 text-[10px] text-cyan-400">✏️ Click to edit profile</div>
             </div>
 

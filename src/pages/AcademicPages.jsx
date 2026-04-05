@@ -40,8 +40,6 @@ export function FeePage({ students, onViewStudent, showToast }) {
         </div>
     );
 }
-// Add import at top of AcademicPages.jsx:
-import { timetables } from '../data/data';
 
 // Replace TimetablePage with:
 export function TimetablePage({ showToast }) {

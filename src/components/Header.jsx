@@ -1,111 +1,162 @@
-const navItems = [
-    {
-        section: 'Overview', items: [
-            { key: 'dashboard', icon: '🏠', label: 'Dashboard' },
-            { key: 'analytics', icon: '📊', label: 'Analytics' },
-            { key: 'events', icon: '📆', label: 'Events', badge: null, badgeColor: 'cyan' },
-        ]
-    },
-    {
-        section: 'People', items: [
-            { key: 'students', icon: '👩‍🎓', label: 'Students' },
-            { key: 'teachers', icon: '👩‍🏫', label: 'Teachers' },
-            { key: 'classes', icon: '🏫', label: 'Classes & Groups' },
-        ]
-    },
-    {
-        section: 'Academic', items: [
-            { key: 'results', icon: '📋', label: 'Results Overview' },
-            { key: 'attendance', icon: '📅', label: 'Attendance Reports' },
-            { key: 'fee', icon: '💰', label: 'Fee Management', badge: '!', badgeColor: 'red' },
-            { key: 'timetable', icon: '🗓️', label: 'Timetable' },
-        ]
-    },
-    {
-        section: 'Communication', items: [
-            { key: 'messages', icon: '💬', label: 'Messages', badge: '5', badgeColor: 'cyan' },
-            { key: 'leaves', icon: '🌿', label: 'Leave Approvals', badge: null, badgeColor: 'red' },
-            { key: 'notices', icon: '📢', label: 'Notices' },
-        ]
-    },
-    {
-        section: 'System', items: [
-            { key: 'settings', icon: '⚙️', label: 'Settings' },
-        ]
-    },
-];
+import { useState, useRef, useEffect } from 'react';
 
-export default function Sidebar({ activePage, onNavigate, onLogout, profile, pendingLeavesCount, onProfileClick }) {
+export default function Topbar({
+    title,
+    subtitle,
+    unreadCount,
+    profile,
+    notifications,
+    onNotifClick,
+    onMsgClick,
+    onProfileClick,
+    onRefresh,
+}) {
+    const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+    const notifRef = useRef(null);
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handler = (e) => {
+            if (notifRef.current && !notifRef.current.contains(e.target)) {
+                setShowNotifDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    const recentNotifs = (notifications || []).slice(0, 5);
+
     return (
-        <aside className="w-60 bg-[#161b22] border-r border-[#30363d] flex flex-col fixed top-0 left-0 bottom-0 overflow-y-auto z-[100]">
-            {/* Logo */}
-            <div className="p-4 border-b border-[#30363d]">
-                <div className="flex items-center gap-2.5">
-                    <span className="text-2xl">🏛️</span>
-                    <div>
-                        <div className="text-[13px] font-bold tracking-widest text-yellow-400" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
-                            HOD / ADMIN
-                        </div>
-                    </div>
-                </div>
+        <header
+            className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 border-b border-[#30363d]"
+            style={{ background: 'rgba(22,27,34,0.95)', backdropFilter: 'blur(10px)' }}
+        >
+            {/* Left — Title & Subtitle */}
+            <div className="flex flex-col justify-center">
+                <h1
+                    className="text-[18px] font-bold text-[#e6edf3] leading-tight tracking-wide"
+                    style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                >
+                    {title}
+                </h1>
+                {subtitle && (
+                    <p className="text-[11px] text-[#8b949e] mt-0.5">{subtitle}</p>
+                )}
             </div>
 
-            {/* Profile */}
-            <div
-                className="px-4 py-3.5 border-b border-[#30363d] text-center cursor-pointer hover:bg-[#21262d] transition-colors"
-                onClick={onProfileClick}
-            >
-                <div className="relative inline-block text-4xl mb-1.5">
-                    🧑‍💼
-                    <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-[#161b22]" />
-                </div>
-                <div className="font-bold text-[15px]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>{profile.name}</div>
-                <div className="text-[10px] text-[#8b949e] leading-relaxed mt-0.5">{profile.desig}<br />Admin Access · Level 5</div>
-                <div className="mt-1.5 text-[10px] text-cyan-400">✏️ Click to edit profile</div>
-            </div>
+            {/* Right — Actions */}
+            <div className="flex items-center gap-2">
 
-            {/* Nav */}
-            <nav className="flex-1 pb-4">
-                {navItems.map(section => (
-                    <div key={section.section} className="pt-2.5 pb-0.5">
-                        <div className="text-[9px] font-bold tracking-[2px] text-[#484f58] px-4 py-1.5 uppercase">{section.section}</div>
-                        {section.items.map(item => {
-                            const badge = item.key === 'leaves' ? (pendingLeavesCount > 0 ? pendingLeavesCount : null) : item.badge;
-                            return (
-                                <button
-                                    key={item.key}
-                                    onClick={() => onNavigate(item.key)}
-                                    className={`w-full flex items-center gap-2 px-4 py-2.5 text-[12.5px] transition-all duration-150 border-l-[3px] text-left
-                    ${activePage === item.key
-                                            ? 'bg-cyan-400/8 text-cyan-400 border-cyan-400'
-                                            : 'text-[#8b949e] border-transparent hover:bg-[#21262d] hover:text-[#e6edf3]'
-                                        }`}
-                                >
-                                    <span className="text-sm">{item.icon}</span>
-                                    <span className="flex-1">{item.label}</span>
-                                    {badge && (
-                                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${item.badgeColor === 'cyan' ? 'bg-cyan-400 text-black' : 'bg-red-500 text-white'
-                                            }`}>
-                                            {badge}
-                                        </span>
-                                    )}
-                                </button>
-                            );
-                        })}
-                    </div>
-                ))}
+                {/* Refresh */}
+                <IconBtn title="Refresh" onClick={onRefresh}>
+                    🔄
+                </IconBtn>
 
-                {/* Logout */}
-                <div className="pt-2.5">
-                    <div className="text-[9px] font-bold tracking-[2px] text-[#484f58] px-4 py-1.5 uppercase">System</div>
+                {/* Messages */}
+                <IconBtn title="Messages" onClick={onMsgClick}>
+                    💬
+                </IconBtn>
+
+                {/* Notifications */}
+                <div className="relative" ref={notifRef}>
                     <button
-                        onClick={onLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-[12.5px] text-[#8b949e] border-l-[3px] border-transparent hover:bg-[#21262d] hover:text-red-400 transition-all"
+                        title="Notifications"
+                        onClick={() => setShowNotifDropdown(p => !p)}
+                        className="relative w-8 h-8 flex items-center justify-center rounded-lg text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-all text-[16px]"
                     >
-                        <span>🚪</span> Logout
+                        🔔
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-cyan-400 text-black text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                            </span>
+                        )}
                     </button>
+
+                    {/* Notification Dropdown */}
+                    {showNotifDropdown && (
+                        <div className="absolute right-0 top-10 w-80 bg-[#161b22] border border-[#30363d] rounded-xl shadow-2xl z-[200] overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-[#30363d]">
+                                <span className="text-[13px] font-bold" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                                    🔔 Notifications
+                                </span>
+                                {unreadCount > 0 && (
+                                    <span className="text-[10px] bg-cyan-400/15 text-cyan-400 px-2 py-0.5 rounded-full font-semibold">
+                                        {unreadCount} unread
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="max-h-72 overflow-y-auto divide-y divide-[#21262d]">
+                                {recentNotifs.length === 0 ? (
+                                    <div className="text-center text-[#8b949e] text-[12px] py-6">No notifications</div>
+                                ) : recentNotifs.map(n => (
+                                    <div
+                                        key={n.id}
+                                        className={`px-4 py-3 flex gap-3 items-start transition-colors hover:bg-[#1c2128]
+                                            ${!n.read ? 'bg-cyan-400/5' : ''}`}
+                                    >
+                                        <div className="flex-1 min-w-0">
+                                            <p className={`text-[12px] leading-snug ${!n.read ? 'text-[#e6edf3]' : 'text-[#8b949e]'}`}>
+                                                {n.text}
+                                            </p>
+                                            <p className="text-[10px] text-[#484f58] mt-0.5">{n.time}</p>
+                                        </div>
+                                        {!n.read && (
+                                            <div className="w-2 h-2 rounded-full bg-cyan-400 mt-1.5 flex-shrink-0" />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="px-4 py-2.5 border-t border-[#30363d]">
+                                <button
+                                    onClick={() => { setShowNotifDropdown(false); onNotifClick(); }}
+                                    className="w-full text-center text-[11px] text-cyan-400 hover:text-cyan-300 font-semibold transition-colors py-1"
+                                >
+                                    View all & manage →
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </nav>
-        </aside>
+
+                {/* Divider */}
+                <div className="w-px h-6 bg-[#30363d] mx-1" />
+
+                {/* Profile */}
+                <button
+                    onClick={onProfileClick}
+                    className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-[#21262d] transition-all group"
+                >
+                    <div
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-[16px] flex-shrink-0"
+                        style={{ background: 'linear-gradient(135deg, #f0a500, #ff7b29)' }}
+                    >
+                        🧑‍💼
+                    </div>
+                    <div className="text-left hidden sm:block">
+                        <div className="text-[12px] font-semibold text-[#e6edf3] leading-tight group-hover:text-cyan-400 transition-colors">
+                            {profile?.name?.split(' ').slice(-1)[0] || 'Admin'}
+                        </div>
+                        <div className="text-[9px] text-[#484f58]">Level 5 Admin</div>
+                    </div>
+                    <span className="text-[#484f58] text-[10px] hidden sm:block">▾</span>
+                </button>
+            </div>
+        </header>
+    );
+}
+
+// Small reusable icon button
+function IconBtn({ children, onClick, title }) {
+    return (
+        <button
+            title={title}
+            onClick={onClick}
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-[#8b949e] hover:text-[#e6edf3] hover:bg-[#21262d] transition-all text-[16px]"
+        >
+            {children}
+        </button>
     );
 }

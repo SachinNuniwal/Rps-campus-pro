@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import Sidebar from '../components/Sidebar';
+import AnalyticsPage from './AnalyticsPage';
 import Topbar from '../components/Header';
 import Toast from '../components/Toast';
 import { Modal, ModalFooter, FormGroup, Input, Btn } from '../components/UI';
@@ -148,13 +149,7 @@ export default function AdminDashboard() {
             case 'settings':
                 return <SettingsPage profile={profile} onSave={(p) => setProfile(prev => ({ ...prev, ...p }))} showToast={showToast} />;
             case 'analytics':
-                return (
-                    <div className="text-center py-20 text-[#8b949e]">
-                        <div className="text-5xl mb-4">📊</div>
-                        <div className="text-xl font-bold" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Analytics Page</div>
-                        <div className="text-[12px] mt-2">Connect to backend API for real-time analytics data</div>
-                    </div>
-                );
+                return <AnalyticsPage students={initialStudents} teachers={teachers} classes={classes} />;
             case 'results':
                 return (
                     <div className="text-center py-20 text-[#8b949e]">
@@ -182,6 +177,7 @@ export default function AdminDashboard() {
             <div className="ml-60 flex-1 flex flex-col min-h-screen">
                 <Topbar
                     title={PAGE_TITLES[page] || page}
+                    unreadCount={unread}
                     subtitle={page === 'dashboard' ? `Welcome back, ${profile.name} 👋 — Thursday, 2 April 2026` : ''}
                     profile={profile}
                     notifications={notifications}
